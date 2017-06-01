@@ -6,6 +6,7 @@ INC_DIR		= incs
 
 SRCS  		= main.c \
 			  error.c \
+			  trojan.c \
 
 OBJ  		= $(SRCS:%.c=objs/%.o)
 

