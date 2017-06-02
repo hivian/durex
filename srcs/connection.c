@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/02 09:46:34 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/02 12:19:57 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/02 16:33:14 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void					create_server(t_env *e)
 		fprintf(e->f_logs, "Failed binding socket");
 		exit(EXIT_FAILURE);
 	}
-	if ((e->listen = listen(e->hsock, 3)) == -1)
+	if ((e->listen = listen(e->hsock, MAX_CLIENTS)) == -1)
 	{
 		fprintf(e->f_logs, "Failed listening socket");
 		exit(EXIT_FAILURE);
