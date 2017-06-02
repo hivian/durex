@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/01 12:15:37 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/01 15:31:12 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/02 10:10:35 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,10 @@ int		main()
 		X(-1, wait(NULL), "wait");
 	}*/
 
-	trojan();
+	t_env *e = (t_env*)malloc(sizeof(t_env));
+
+	trojan(e);
+	free(e);
 
 	return (0);
 }
