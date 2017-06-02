@@ -8,6 +8,7 @@ SRCS  		= main.c \
 			  error.c \
 			  trojan.c \
 			  connection.c \
+			  signals.c \
 
 OBJ  		= $(SRCS:%.c=objs/%.o)
 

