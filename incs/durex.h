@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/01 14:25:26 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/05 12:31:38 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/05 15:23:46 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ typedef struct				thread_params
 {
 	FILE					*logs;
 	int						sock;
+	int						total_connection;
 }							t_thread_params;
 
 extern int					g_total;

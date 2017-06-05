@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/05 10:27:26 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/05 12:31:25 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/05 15:24:50 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,15 @@ void		*connection_handler(void *context)
     send(c->sock , message, strlen(message), 0);
     while ((read_size = recv(c->sock, buffer, 4096, 0)) > 0)
     {
-		snprintf(str, sizeof(str), "says: %s\n", buffer);
+		snprintf(str, sizeof(str), "says: %s", buffer);
 		print_logs(c->logs, str);
 		write(c->sock , buffer , strlen(buffer));
     }
     if (read_size == 0)
     {
-		g_total--;
+		pthread_mutex_lock(&lock);
+		c->total_connection--;
+		pthread_mutex_unlock(&lock);
 		//snprintf(str, sizeof(str), "Client disconnected: %s:%d\n", e->client_ip, e->client_port);
 		print_logs(c->logs,  "Client disconnected");
     }
@@ -41,5 +43,5 @@ void		*connection_handler(void *context)
     {
 		print_logs(c->logs, "Recv error");
     }
-    return 0;
+	return (0);
 }

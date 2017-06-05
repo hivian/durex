@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/01 15:20:54 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/05 12:35:00 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/05 15:26:40 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,19 +17,23 @@ static void		lock_file(t_env *e) {
 
 	if (fileno(lockfile) == -1) {
 		fprintf(e->f_logs, "Could not open PID lock file %s, exiting\n", LOCK_PATH);
+		fflush(e->f_logs);
         exit(EXIT_SUCCESS);
 	}
 	if (lockf(fileno(lockfile), F_TLOCK, 0) == -1) {
 		fprintf(e->f_logs, "Could not lock PID lock file %s, exiting\n", LOCK_PATH);
+		fflush(e->f_logs);
         exit(EXIT_SUCCESS);
 	}
 }
 
 static void		loop(t_env *e)
 {
-	int g_total = 0;
 	char str[256];
 
+	t_thread_params params;
+	params.logs = e->f_logs;
+	params.total_connection = 0;
 	while (1)
 	{
 		print_logs(e->f_logs, "Waiting for a new connection.");
@@ -37,28 +41,28 @@ static void		loop(t_env *e)
 			exit(1);
 		bzero(str, sizeof(str));
 		pthread_t thread;
-		t_thread_params params;
 		params.sock = e->csock;
-		params.logs = e->f_logs;
-		if (g_total < MAX_CLIENTS)
+		if (params.total_connection < MAX_CLIENTS)
 		{
-			g_total++;
+			params.total_connection++;
 			get_client_ip(e);
-			snprintf(str, sizeof(str), "Received new connection: %s:%d\n", e->client_ip, e->client_port);
+			snprintf(str, sizeof(str), "Received new connection: %s:%d", e->client_ip, e->client_port);
 			print_logs(e->f_logs, str);
 		}
 		else
 		{
-			snprintf(str, sizeof(str), "Max number of users reached. Limit: %d\n", MAX_CLIENTS);
+			snprintf(str, sizeof(str), "Max number of users reached. Limit: %d", MAX_CLIENTS);
 			print_logs(e->f_logs, str);
 			close(e->csock);
+			continue;
 		}
+		fprintf(e->f_logs, "global = %d\n", params.total_connection);
 		if (pthread_create(&thread, NULL, connection_handler, &params) < 0)
         {
 			print_logs(e->f_logs, "Could not create thread");
-            return;
+            continue;
         }
-		pthread_join(thread, NULL);
+		//pthread_join(thread, NULL);
 	}
 }
 
