@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/05 10:27:26 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/05 12:28:28 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/05 12:31:25 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,8 @@ void		*connection_handler(void *context)
     if (read_size == 0)
     {
 		g_total--;
-		//snprintf(str, sizeof(str), "Client disconnected\n", e->client_ip, e->client_port);
-		print_logs(c->logs, "Client disconnected");
+		//snprintf(str, sizeof(str), "Client disconnected: %s:%d\n", e->client_ip, e->client_port);
+		print_logs(c->logs,  "Client disconnected");
     }
     else if (read_size == -1)
     {

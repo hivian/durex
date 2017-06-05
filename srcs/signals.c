@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/02 12:22:42 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/05 12:25:19 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/05 12:37:20 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,14 @@
 
 void		catch_sig(int sig)
 {
-	char	str[256];
+	//char	str[256];
 
-	bzero(str, sizeof(str));
+	//bzero(str, sizeof(str));
 	remove(LOCK_PATH);
 	remove(LOG_PATH);
-	
-	fprintf(stdout, "Process killed with value: %d", sig);
+	//snprintf(str, sizeof(str), "Process killed with value: %d", sig);
+	//print_logs(str)
+	//fprintf(stdout, "Process killed with value: %d", sig);
 	exit(EXIT_SUCCESS);
 }
 
