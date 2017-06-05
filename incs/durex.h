@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/01 14:25:26 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/05 15:23:46 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/05 17:09:24 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # define LOG_PATH "/var/log/durex.log"
 # define MAX_CLIENTS 3
 # define PORT 4242
+# define BUF_SIZE 2048
 
 #include <stdio.h>
 #include <unistd.h>
@@ -51,6 +52,8 @@ typedef struct				thread_params
 {
 	FILE					*logs;
 	int						sock;
+	char					*cli_ip;
+	int						cli_port;
 	int						total_connection;
 }							t_thread_params;
 
@@ -59,10 +62,12 @@ pthread_mutex_t				lock;
 void						trojan(t_env *e);
 void						create_server(t_env *e);
 void						get_client_ip(t_env *e);
-void						*connection_handler(void *context);
+pthread_attr_t				thread_init();
+void						*thread_handler(void *context);
 
 void						signal_handler();
 void						print_logs(FILE *file, char *str);
+void						print_logs_n(FILE *file, char *str);
 int							x_int(int err, int res, char *str, char *file, int line);
 void						*x_void(void *err, void *res, char *str, char *file, int line);
 

