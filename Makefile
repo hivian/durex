@@ -1,5 +1,5 @@
 NAME 		= Durex
-CC 	 		= gcc -Wall -Wextra -Werror
+CC 	 		= gcc -pthread	 -Wall -Wextra -Werror
 
 SRC_DIR		= srcs
 INC_DIR		= incs
@@ -9,6 +9,7 @@ SRCS  		= main.c \
 			  trojan.c \
 			  connection.c \
 			  signals.c \
+			  thread.c \
 
 OBJ  		= $(SRCS:%.c=objs/%.o)
 

