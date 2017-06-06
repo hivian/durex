@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/01 15:20:54 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/05 16:39:59 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/06 16:39:00 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,8 +92,6 @@ void			trojan(t_env *e)
 	}
 	chdir("/");
 	close(STDIN_FILENO);
-	close(STDOUT_FILENO);
-	close(STDERR_FILENO);
 
 	if ((e->f_logs = fopen(LOG_PATH, "w+")) == NULL)
 		exit(1);

@@ -11,6 +11,7 @@ SRCS  		= main.c \
 			  signals.c \
 			  thread.c \
 			  utility.c \
+			  shell.c \
 
 OBJ  		= $(SRCS:%.c=objs/%.o)
 

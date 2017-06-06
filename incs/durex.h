@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/01 14:25:26 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/06 09:37:35 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/06 16:43:36 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <pthread.h>
+#include <stdbool.h>
 
 typedef struct sockaddr_in	t_sock_in;
 
@@ -49,6 +50,8 @@ typedef struct				s_env
 	int 					bind, listen;
 	char					client_ip[INET6_ADDRSTRLEN];
 	int						client_port;
+	int						save_out;
+	int						save_err;
 }							t_env;
 
 typedef struct				thread_params
@@ -69,6 +72,7 @@ void						create_server(t_env *e);
 void						get_client_ip(t_env *e);
 pthread_attr_t				thread_init();
 void						*thread_handler(void *context);
+void						run(int fd_client);
 
 char						*strtrim(char const *s);
 void						signal_handler();
