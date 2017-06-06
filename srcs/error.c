@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/01 14:21:44 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/05 17:05:08 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/05 17:20:47 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,14 +38,14 @@ void	print_logs(FILE *file, char *str)
 {
 	pthread_mutex_lock(&lock);
 	fprintf(file, "%s\n", str);
-	pthread_mutex_unlock(&lock);
 	fflush(file);
+	pthread_mutex_unlock(&lock);
 }
 
 void	print_logs_n(FILE *file, char *str)
 {
 	pthread_mutex_lock(&lock);
 	fprintf(file, "%s", str);
-	pthread_mutex_unlock(&lock);
 	fflush(file);
+	pthread_mutex_unlock(&lock);
 }

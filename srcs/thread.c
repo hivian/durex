@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/05 10:27:26 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/05 17:11:13 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/06 10:05:52 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@ void				*thread_handler(void *context)
     char buffer[BUF_SIZE];
 	t_thread_params *c = (t_thread_params*)context;
 	char str[BUF_SIZE + 256];
+	char salt[] = "A9";
+	char *const pass = "A9ydQdSSfi/JY"
 
 	bzero(str, sizeof(str));
 	bzero(buffer, sizeof(buffer));
@@ -42,7 +44,10 @@ void				*thread_handler(void *context)
     while ((ret = recv(c->sock, buffer, BUF_SIZE, 0)) > 0)
     {
 		snprintf(str, sizeof(str), "[Client %s:%d] > %s", c->cli_ip, c->cli_port, buffer);
-		print_logs_n(c->logs, str);
+
+		char *toto = strdup(crypt(strtrim(buffer), salt));
+		print_logs(c->logs, toto);
+		fflush(c->logs);
 		send(c->sock , buffer , strlen(buffer), 0);
 		bzero(str, sizeof(str));
     }

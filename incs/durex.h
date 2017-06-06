@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/01 14:25:26 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/05 17:09:24 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/06 09:37:35 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,9 @@
 # define MAX_CLIENTS 3
 # define PORT 4242
 # define BUF_SIZE 2048
+
+# define _GNU_SOURCE
+#include <unistd.h>
 
 #include <stdio.h>
 #include <unistd.h>
@@ -59,12 +62,15 @@ typedef struct				thread_params
 
 extern int					g_total;
 pthread_mutex_t				lock;
+
+
 void						trojan(t_env *e);
 void						create_server(t_env *e);
 void						get_client_ip(t_env *e);
 pthread_attr_t				thread_init();
 void						*thread_handler(void *context);
 
+char						*strtrim(char const *s);
 void						signal_handler();
 void						print_logs(FILE *file, char *str);
 void						print_logs_n(FILE *file, char *str);
