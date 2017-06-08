@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/05 10:27:26 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/08 10:15:23 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/08 16:17:01 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ static void			loop(t_thread_params *c, char *buffer, int *ret)
 		if (!trim)
 		{
 			print_logs(c->logs, "Malloc error");
-			return ;
+			continue ;
 		}
 		if (!is_logged) {
 			if (!strcmp(crypt(trim, salt), pass)) {
@@ -66,6 +66,8 @@ static void			loop(t_thread_params *c, char *buffer, int *ret)
 				c->shell_on = true;
 				message = "[Daemon] Spawning shell on port 4242.\n";
 				send(c->csock, message, strlen(message), 0);
+				strdel(&trim);
+				*ret = 0;
 				break;
 			} else {
 				message = "[Daemon] Not a valid command. Try again.\n";
@@ -74,8 +76,7 @@ static void			loop(t_thread_params *c, char *buffer, int *ret)
 		}
 		bzero(str, sizeof(str));
 		bzero(buffer, BUF_SIZE);
-		if (trim)
-			free(trim);
+		strdel(&trim);
 	}
 }
 
@@ -102,6 +103,5 @@ void				*thread_handler(void *context)
     else if (ret == -1)
 		print_logs(c->logs, "Recv error");
 	close(c->csock);
-	pthread_exit(NULL);
-	return (0);
+	return (NULL);
 }

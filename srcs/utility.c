@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/06 09:36:17 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/06 09:37:39 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/08 15:57:37 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,4 +26,13 @@ char		*strtrim(char const *s)
 		len--;
 	str = strndup(s, len);
 	return (str);
+}
+
+void		strdel(char **as)
+{
+	if (as != NULL)
+	{
+		free(*as);
+		*as = NULL;
+	}
 }

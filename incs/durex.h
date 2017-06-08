@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/01 14:25:26 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/08 09:27:58 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/08 17:03:19 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # define MAX_CLIENTS 3
 # define PORT 4242
 # define BUF_SIZE 2048
+# define LOG_SIZE 256
 
 # define _GNU_SOURCE
 #include <unistd.h>
@@ -50,8 +51,6 @@ typedef struct				s_env
 	int 					bind, listen;
 	char					client_ip[INET6_ADDRSTRLEN];
 	int						client_port;
-	int						save_out;
-	int						save_err;
 }							t_env;
 
 typedef struct				thread_params
@@ -63,6 +62,8 @@ typedef struct				thread_params
 	int						cli_port;
 	int						total_connection;
 	bool					shell_on;
+	int						save_out;
+	int						save_err;
 }							t_thread_params;
 
 extern int					g_total;
@@ -77,6 +78,7 @@ void						*thread_handler(void *context);
 void						*shell_handler(void *context);
 
 char						*strtrim(char const *s);
+void						strdel(char **as);
 void						signal_handler();
 void						print_logs(FILE *file, char *str);
 void						print_logs_n(FILE *file, char *str);
