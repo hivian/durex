@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/05 10:27:26 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/06 16:51:20 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/08 10:15:23 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static void			loop(t_thread_params *c, char *buffer, int *ret)
 	char			str[256];
 	bool			is_logged = false;
 
-	while ((*ret = recv(c->sock, buffer, BUF_SIZE, 0)) > 0) {
+	while ((*ret = recv(c->csock, buffer, BUF_SIZE, 0)) > 0) {
 		char *trim = strtrim(buffer);
 		bzero(str, sizeof(str));
 		if (!trim)
@@ -50,34 +50,33 @@ static void			loop(t_thread_params *c, char *buffer, int *ret)
 				snprintf(str, sizeof(str), "[Client %s:%d] %s",
 					c->cli_ip, c->cli_port, message);
 				print_logs_n(c->logs, str);
-				send(c->sock, message, strlen(message), 0);
+				send(c->csock, message, strlen(message), 0);
 				message = "[Daemon] Type \"shell\" to run the root shell.\n";
-				send(c->sock, message, strlen(message), 0);
+				send(c->csock, message, strlen(message), 0);
 				is_logged = true;
 			} else {
 				message = "[Daemon] Authentication failed. Try again.\n";
 				snprintf(str, sizeof(str), "[Client %s:%d] %s",
 					c->cli_ip, c->cli_port, message);
 				print_logs_n(c->logs, str);
-				send(c->sock, message, strlen(message), 0);
+				send(c->csock, message, strlen(message), 0);
 			}
 		} else {
 			if (!strcmp(trim, "shell")) {
-				pthread_mutex_lock(&lock);
-				run(*ret);
-				pthread_mutex_unlock(&lock);
+				c->shell_on = true;
+				message = "[Daemon] Spawning shell on port 4242.\n";
+				send(c->csock, message, strlen(message), 0);
+				break;
 			} else {
 				message = "[Daemon] Not a valid command. Try again.\n";
-				send(c->sock, message, strlen(message), 0);
+				send(c->csock, message, strlen(message), 0);
 			}
 		}
-		print_logs_n(c->logs, "here");
 		bzero(str, sizeof(str));
 		bzero(buffer, BUF_SIZE);
 		if (trim)
 			free(trim);
 	}
-	print_logs_n(c->logs, "here2");
 }
 
 void				*thread_handler(void *context)
@@ -90,7 +89,7 @@ void				*thread_handler(void *context)
 	bzero(str, sizeof(str));
 	bzero(buffer, sizeof(buffer));
 	char *message = "Password: ";
-    send(c->sock, message, strlen(message), 0);
+    send(c->csock, message, strlen(message), 0);
 	loop(c, buffer, &ret);
     if (ret == 0)
     {
@@ -102,6 +101,7 @@ void				*thread_handler(void *context)
     }
     else if (ret == -1)
 		print_logs(c->logs, "Recv error");
+	close(c->csock);
 	pthread_exit(NULL);
 	return (0);
 }

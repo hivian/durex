@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/01 14:25:26 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/06 16:43:36 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/08 09:27:58 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,10 +57,12 @@ typedef struct				s_env
 typedef struct				thread_params
 {
 	FILE					*logs;
-	int						sock;
+	int						hsock;
+	int						csock;
 	char					*cli_ip;
 	int						cli_port;
 	int						total_connection;
+	bool					shell_on;
 }							t_thread_params;
 
 extern int					g_total;
@@ -72,7 +74,7 @@ void						create_server(t_env *e);
 void						get_client_ip(t_env *e);
 pthread_attr_t				thread_init();
 void						*thread_handler(void *context);
-void						run(int fd_client);
+void						*shell_handler(void *context);
 
 char						*strtrim(char const *s);
 void						signal_handler();
