@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/01 15:20:54 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/09 10:08:05 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/09 11:36:54 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,14 +79,13 @@ static void		loop(t_env *e)
 	            continue;
 	        }
 		} else {
-			print_logs(e->f_logs, "Shelled");
+			print_logs(e->f_logs, "Shell active");
 			if (pthread_create(&thread, &thread_attr, shell_handler, &params) < 0)
 	        {
 				print_logs(e->f_logs, "Could not create thread");
 	            continue;
 	        }
 		}
-		pthread_join( thread, NULL);
 	}
 }
 

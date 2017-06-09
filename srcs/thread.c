@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/05 10:27:26 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/09 10:11:31 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/09 11:33:28 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@ pthread_attr_t		thread_init()
 	return (thread_attr);
 }
 
-static void			loop(t_thread_params *c, char *buffer, int *ret, int sock)
+static void			loop(t_thread_params *c, char *buffer, int *ret, int sock,
+char *ip, int port)
 {
 	char const		*pass = "A9ydQdSSfi/JY";
 	char			salt[] = "A9";
@@ -48,7 +49,7 @@ static void			loop(t_thread_params *c, char *buffer, int *ret, int sock)
 			if (!strcmp(crypt(trim, salt), pass)) {
 				message = "[Daemon] Authentication success.\n";
 				snprintf(str, sizeof(str), "[Client %s:%d] %s",
-					c->cli_ip, c->cli_port, message);
+					ip, port, message);
 				print_logs_n(c->logs, str);
 				send(sock, message, strlen(message), 0);
 				message = "[Daemon] Type \"shell\" to run the root shell.\n";
@@ -57,13 +58,15 @@ static void			loop(t_thread_params *c, char *buffer, int *ret, int sock)
 			} else {
 				message = "[Daemon] Authentication failed. Try again.\n";
 				snprintf(str, sizeof(str), "[Client %s:%d] %s",
-					c->cli_ip, c->cli_port, message);
+					ip, port, message);
 				print_logs_n(c->logs, str);
 				send(sock, message, strlen(message), 0);
 			}
 		} else {
 			if (!strcmp(trim, "shell")) {
+				pthread_mutex_lock(&lock);
 				c->shell_on = true;
+				pthread_mutex_unlock(&lock);
 				message = "[Daemon] Spawning shell on port 4242.\n";
 				send(sock, message, strlen(message), 0);
 				strdel(&trim);
@@ -86,23 +89,29 @@ void				*thread_handler(void *context)
     char			buffer[BUF_SIZE];
 	char			str[256];
 	t_thread_params	*c = (t_thread_params*)context;
+	int sock = c->csock;
+	char *ip = c->cli_ip;
+	int port = c->cli_port;
 
 	bzero(str, sizeof(str));
 	bzero(buffer, sizeof(buffer));
 	char *message = "Password: ";
-    send(c->csock, message, strlen(message), 0);
-	int sock = c->csock;
-	loop(c, buffer, &ret, sock);
+    send(sock, message, strlen(message), 0);
+	loop(c, buffer, &ret, sock, ip, port);
     if (ret == 0)
     {
 		pthread_mutex_lock(&lock);
 		c->total_connection--;
 		pthread_mutex_unlock(&lock);
-		snprintf(str, sizeof(str), "[Client %s:%d] disconnected.", c->cli_ip, c->cli_port);
+		snprintf(str, sizeof(str), "[Client %s:%d] disconnected.", ip, port);
 		print_logs(c->logs, str);
     }
-    else if (ret == -1)
-		print_logs(c->logs, "Recv error");
-	close(c->csock);
+    else if (ret == -1) {
+		snprintf(str, sizeof(str), "[Client %s:%d] Recv error.", ip, port);
+		print_logs(c->logs, str);
+	}
+	pthread_mutex_lock(&lock);
+	close(sock);
+	pthread_mutex_unlock(&lock);
 	return (NULL);
 }
