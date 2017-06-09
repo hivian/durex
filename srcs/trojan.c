@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/01 15:20:54 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/08 17:03:44 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/09 10:08:05 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,8 +72,6 @@ static void		loop(t_env *e)
 		params.cli_port = e->client_port;
 		if (!check_nb_client(str, &params, e))
 			continue;
-		fprintf(e->f_logs, "NB = %d\n", params.total_connection);
-		fflush(e->f_logs);
 		if (params.shell_on == false) {
 			if (pthread_create(&thread, &thread_attr, thread_handler, &params) < 0)
 	        {
@@ -88,6 +86,7 @@ static void		loop(t_env *e)
 	            continue;
 	        }
 		}
+		pthread_join( thread, NULL);
 	}
 }
 
