@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/01 15:20:54 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/09 11:36:54 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/09 15:09:06 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,6 @@ static void		loop(t_env *e)
 
 void			trojan(t_env *e)
 {
-	//signal_handler();
 	pid_t process_id = 0;
 	pid_t sid = 0;
 	process_id = fork();

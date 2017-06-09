@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/06 16:25:59 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/09 11:37:10 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/09 15:01:15 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,10 @@ void			*shell_handler(void *context)
 	pthread_mutex_lock(&lock);
 	if (c->total_connection == 0) {
 		c->shell_on = false;
-		print_logs(e->f_logs, "Shell inactive");
+		pthread_mutex_unlock(&lock);
+		print_logs(c->logs, "Shell inactive");
 	}
+	pthread_mutex_lock(&lock);
 	close(sock);
 	pthread_mutex_unlock(&lock);
 	return (NULL);
