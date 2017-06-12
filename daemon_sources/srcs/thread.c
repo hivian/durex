@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/05 10:27:26 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/09 11:33:28 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/12 16:06:38 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,12 @@ pthread_attr_t		thread_init()
 {
 	pthread_attr_t	thread_attr;
 
-	if (pthread_attr_init (&thread_attr) != 0) {
+	if (pthread_attr_init(&thread_attr) != 0) {
 		fprintf (stderr, "pthread_attr_init error");
 		exit(EXIT_SUCCESS);
     }
 
-	if (pthread_attr_setdetachstate (&thread_attr, PTHREAD_CREATE_DETACHED) != 0) {
+	if (pthread_attr_setdetachstate(&thread_attr, PTHREAD_CREATE_DETACHED) != 0) {
 		fprintf (stderr, "pthread_attr_setdetachstate error");
 		exit(EXIT_SUCCESS);
     }

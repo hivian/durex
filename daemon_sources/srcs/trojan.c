@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/01 15:20:54 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/09 15:09:06 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/12 16:30:31 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,10 +100,7 @@ void			trojan(t_env *e)
 		exit(EXIT_SUCCESS);
 	}
 	if (process_id > 0)
-	{
-		fprintf(stderr, "process_id of child process %d \n", process_id);
 		exit(EXIT_SUCCESS);
-	}
 	umask(027);
 	sid = setsid();
 	if(sid < 0)
@@ -112,7 +109,6 @@ void			trojan(t_env *e)
 	}
 	chdir("/");
 	close(STDIN_FILENO);
-
 	if ((e->f_logs = fopen(LOG_PATH, "w+")) == NULL)
 		exit(1);
 	lock_file(e);

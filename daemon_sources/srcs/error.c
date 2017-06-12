@@ -5,31 +5,25 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/06/12 16:49:20 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/12 16:50:30 by hivian           ###   ########.fr       */
+/*   Created: 2017/06/01 14:21:44 by hivian            #+#    #+#             */
+/*   Updated: 2017/06/12 16:50:25 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "durex.h"
 
-int		x_int(int err, int res, char *str, char *file, int line)
+void	print_logs(FILE *file, char *str)
 {
-	if (res == err)
-	{
-		fprintf(stderr, "%s error (%s, %d): %s\n",
-		str, file, line, strerror(errno));
-		exit (1);
-	}
-	return (res);
+	pthread_mutex_lock(&lock);
+	fprintf(file, "%s\n", str);
+	fflush(file);
+	pthread_mutex_unlock(&lock);
 }
 
-void	*x_void(void *err, void *res, char *str, char *file, int line)
+void	print_logs_n(FILE *file, char *str)
 {
-	if (res == err)
-	{
-		fprintf(stderr, "%s error (%s, %d): %s\n",
-		str, file, line, strerror(errno));
-		exit (1);
-	}
-	return (res);
+	pthread_mutex_lock(&lock);
+	fprintf(file, "%s", str);
+	fflush(file);
+	pthread_mutex_unlock(&lock);
 }
