@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/05 10:27:26 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/12 16:06:38 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/13 14:40:18 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,10 +56,11 @@ char *ip, int port)
 				send(sock, message, strlen(message), 0);
 				is_logged = true;
 			} else {
-				message = "[Daemon] Authentication failed. Try again.\n";
+				message = "Authentication failed.\n";
 				snprintf(str, sizeof(str), "[Client %s:%d] %s",
 					ip, port, message);
 				print_logs_n(c->logs, str);
+				message = "[Daemon] Password: ";
 				send(sock, message, strlen(message), 0);
 			}
 		} else {
@@ -71,9 +72,10 @@ char *ip, int port)
 				send(sock, message, strlen(message), 0);
 				strdel(&trim);
 				*ret = 0;
+				print_logs(c->logs, "Shell active.");
 				break;
 			} else {
-				message = "[Daemon] Not a valid command. Try again.\n";
+				message = "[Daemon] Invalid command. Try again.\n";
 				send(sock, message, strlen(message), 0);
 			}
 		}
@@ -95,7 +97,7 @@ void				*thread_handler(void *context)
 
 	bzero(str, sizeof(str));
 	bzero(buffer, sizeof(buffer));
-	char *message = "Password: ";
+	char *message = "[Daemon] Password: ";
     send(sock, message, strlen(message), 0);
 	loop(c, buffer, &ret, sock, ip, port);
     if (ret == 0)

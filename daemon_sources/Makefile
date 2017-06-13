@@ -8,7 +8,6 @@ SRCS  		= main.c \
 			  error.c \
 			  trojan.c \
 			  connection.c \
-			  signals.c \
 			  thread.c \
 			  utility.c \
 			  shell.c \

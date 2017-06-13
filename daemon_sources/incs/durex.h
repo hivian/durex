@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/01 14:25:26 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/13 12:21:08 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/13 14:16:13 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,8 @@ typedef struct				thread_params
 	int						cli_port;
 	int						total_connection;
 	bool					shell_on;
+	int						stdout_save;
+	int						stderr_save;
 }							t_thread_params;
 
 extern int					g_total;

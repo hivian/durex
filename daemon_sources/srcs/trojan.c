@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/01 15:20:54 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/13 12:45:47 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/13 14:37:58 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,14 +55,16 @@ static void		loop(t_env *e)
 	params.logs = e->f_logs;
 	params.total_connection = 0;
 	params.shell_on = false;
+	params.stdout_save = dup(STDOUT_FILENO);
+	params.stderr_save = dup(STDERR_FILENO);
 	while (1)
 	{
 		pthread_t thread;
 
 		print_logs(e->f_logs, "Waiting for a new connection.");
 		if ((e->csock = accept(e->hsock, (struct sockaddr *)&e->haddr, &e->haddr_size)) == -1) {
-			print_logs(e->f_logs, "accept error.");
-			exit(1);
+			print_logs(e->f_logs, "Accept error.");
+			continue;
 		}
 		bzero(str, sizeof(str));
 		get_client_ip(e);
@@ -72,19 +74,16 @@ static void		loop(t_env *e)
 		params.cli_port = e->client_port;
 		if (!check_nb_client(str, &params, e))
 			continue;
-		fprintf(e->f_logs, "Logged\n");
-		fflush(e->f_logs);
 		if (params.shell_on == false) {
 			if (pthread_create(&thread, &thread_attr, thread_handler, &params) < 0)
 	        {
-				print_logs(e->f_logs, "Could not create thread");
+				print_logs(e->f_logs, "Could not create thread.");
 	            continue;
 	        }
 		} else {
-			print_logs(e->f_logs, "Shell active");
 			if (pthread_create(&thread, &thread_attr, shell_handler, &params) < 0)
 	        {
-				print_logs(e->f_logs, "Could not create thread");
+				print_logs(e->f_logs, "Could not create thread.");
 	            continue;
 	        }
 		}

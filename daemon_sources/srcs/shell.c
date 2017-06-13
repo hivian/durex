@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/06 16:25:59 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/13 12:44:59 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/13 14:21:28 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,13 @@ void			*shell_handler(void *context)
 		char *trim = strtrim(buffer);
 		if (!trim)
 		{
-			print_logs(c->logs, "Malloc error");
+			print_logs(c->logs, "Malloc error.");
 			continue ;
 		}
 		if (!strcmp(trim, "exit")) {
 			ret = 0;
+			dup2(c->stdout_save, STDOUT_FILENO);
+			dup2(c->stderr_save, STDERR_FILENO);
 			break ;
 		}
 		dup2(sock, STDOUT_FILENO);
@@ -55,7 +57,7 @@ void			*shell_handler(void *context)
 		pthread_mutex_lock(&lock);
 		c->shell_on = false;
 		pthread_mutex_unlock(&lock);
-		print_logs(c->logs, "Shell inactive");
+		print_logs(c->logs, "Shell inactive.");
 	}
 	pthread_mutex_lock(&lock);
 	close(sock);

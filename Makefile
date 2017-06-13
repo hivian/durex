@@ -1,6 +1,5 @@
 NAME 		= Durex
-CC 	 		= gcc -std=c11
-#-Wall -Wextra -Werror
+CC 	 		= gcc -std=c11 -Wall -Wextra -Werror
 
 SRC_DIR		= srcs
 INC_DIR		= incs
