@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/06 16:25:59 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/09 15:01:15 by hivian           ###   ########.fr       */
+/*   Updated: 2017/06/13 12:44:59 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,8 @@ void			*shell_handler(void *context)
 		snprintf(str, sizeof(str), "[Client %s:%d] Recv error.", ip, port);
 		print_logs(c->logs, str);
 	}
-	pthread_mutex_lock(&lock);
 	if (c->total_connection == 0) {
+		pthread_mutex_lock(&lock);
 		c->shell_on = false;
 		pthread_mutex_unlock(&lock);
 		print_logs(c->logs, "Shell inactive");
