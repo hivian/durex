@@ -6,7 +6,7 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/01 14:25:26 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/13 14:16:13 by hivian           ###   ########.fr       */
+/*   Updated: 2017/07/17 17:05:02 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,9 +57,6 @@ typedef struct				thread_params
 	char					*cli_ip;
 	int						cli_port;
 	int						total_connection;
-	bool					shell_on;
-	int						stdout_save;
-	int						stderr_save;
 }							t_thread_params;
 
 extern int					g_total;
@@ -71,7 +68,6 @@ void						create_server(t_env *e);
 void						get_client_ip(t_env *e);
 pthread_attr_t				thread_init();
 void						*thread_handler(void *context);
-void						*shell_handler(void *context);
 
 char						*strtrim(char const *s);
 void						strdel(char **as);

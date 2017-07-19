@@ -6,13 +6,29 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/06 09:36:17 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/08 15:57:37 by hivian           ###   ########.fr       */
+/*   Updated: 2017/07/17 17:09:18 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "durex.h"
 
-char		*strtrim(char const *s)
+pthread_attr_t		thread_init()
+{
+	pthread_attr_t	thread_attr;
+
+	if (pthread_attr_init(&thread_attr) != 0) {
+		fprintf (stderr, "pthread_attr_init error");
+		exit(EXIT_SUCCESS);
+    }
+
+	if (pthread_attr_setdetachstate(&thread_attr, PTHREAD_CREATE_DETACHED) != 0) {
+		fprintf (stderr, "pthread_attr_setdetachstate error");
+		exit(EXIT_SUCCESS);
+    }
+	return (thread_attr);
+}
+
+char				*strtrim(char const *s)
 {
 	char	*str;
 	size_t	len;
@@ -28,7 +44,7 @@ char		*strtrim(char const *s)
 	return (str);
 }
 
-void		strdel(char **as)
+void				strdel(char **as)
 {
 	if (as != NULL)
 	{

